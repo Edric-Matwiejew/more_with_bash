@@ -49,9 +49,9 @@ del () {
 	FILES=()
 	OPTIONs=()
 
-	for input in $@
+	for INPUT in $@
 	do
-		if echo $INPUT | grep -Eq '\-[a-zA-Z?][0-9*]'
+		if echo "$INPUT" | grep -Eq '\-[a-zA-Z?][0-9*]'
 		then
 			OPTIONs+=("$INPUT")
 		else
