@@ -2,7 +2,7 @@
 
 RECYCLE_BIN_SOURCE=$(readlink -f $( dirname "${BASH_SOURCE[0]}" ))
 
-. $RECYCLE_BIN_SOURCE/.recycle_config
+RECYCLE_BIN_DIR="$RECYCLE_BIN_SOURCE"/.recycle_bin
 
 if [ ! -e $RECYCLE_BIN_DIR ]
 then
