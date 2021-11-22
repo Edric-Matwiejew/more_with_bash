@@ -2,21 +2,25 @@
 ### An intermediate Unix workshop.
 
 ### Contents
-1. The Structure of Unix Commands
-2. Defining a 'del' Command
-3. BASH Scripts and BASH Script Arguments
-4. BASH Functions
-5. BASH If Statements
-6. Regular Expressions
-7. BASH For Loops
-8. BASH Arrays
-
+1.  The Structure of Unix Commands
+2.  Defining a 'del' Command
+3.  BASH Scripts and BASH Script Arguments
+4.  BASH Functions
+5.  BASH If Statements
+6.  Regular Expressions
+7.  BASH For Loops
+8.  BASH Arrays
+9.	Parsing Delimited Text Files with 'awk'
+10.	Implementing 'del'
+11.	Dotfiles
+12. Aliases
+13. Process Management
 
 ## 1. The Structure of Unix Commands
 
 Unix commands follow a general strucutre:
 
->> <verb> <adverb(s)> <object(s)>
+<verb> <adverb(s)> <object(s)>
 
 For example in:
 
@@ -24,7 +28,7 @@ For example in:
 
 The command 'ls' is the verb, '-A' is the adverb and '~/' (the user home directory) is the object. More generally, we refer to these components as:
 
->> [COMMAND] [OPTION(s)] [FILES(s)]
+[COMMAND] [OPTION(s)] [FILES(s)]
 
 In general, a Unix-like command is a small program that reads an input string from the "standard input" (stdin) and returns an output string to the "standard output" (stdout). This predictable behaviour supports the piping of output from one command to another.
 
@@ -36,7 +40,7 @@ In this workshop, we will develop a user-defined  'del' command that:
 
 1. Sends target FILES(s) to a hidden 'recycle bin' directory '.recycle_bin':
 
->> del [FILE(s)]
+	del [FILE(s)]
 
 2. When passed the -l option lists the N most recently 'recycled' files:
 
@@ -44,7 +48,7 @@ In this workshop, we will develop a user-defined  'del' command that:
 
 3. When passed the -u option undoes the N most recent 'recycles':
 
-	del -uN 
+	del -uN
 
 Where '-l' and '-u' are options and 'N' is an integer value.
 
@@ -61,20 +65,20 @@ BASH scripts accept an arbitrary number of whitespace delimited input arguments.
 * $0, 	the script (or function) name.
 * $N, 	the Nth arguments.
 * $#, 	the number of variables passed to the script (or function).
-* $* and $@,	all of the positional arguments. 
+* $* and $@,	all of the positional arguments.
 
-Where '$*' expands to a single string and '$@' expands to a sequence of strings. 
+Where '$*' expands to a single string and '$@' expands to a sequence of strings.
 
 ___
 
 Example 1: Parsing arguments.
 
 	#!/bin/bash
-	echo "The name of the script 
+	echo "The name of the script
 	echo "This is the first argument $1."
 	echo "There are $# argument(s) in total:"
 	echo "$@"
-	
+
 ___
 
 ## 4. BASH Functions
@@ -83,9 +87,9 @@ BASH functions allow the same piece of BASH code to be reused multiple times in 
 
 ### BASH function syntax:
 
->> <function name> () {
->>	<...>
->>	}
+<function name> () {
+	<...>
+	}
 
 The result of a BASH function should be output to stdin, which can be done using the 'echo' command.
 
@@ -116,15 +120,15 @@ If statements allow us to write BASH scripts with conditional behaviour.
 
 ### If statement syntax:
 
->> if [ <some test> ]
->> then
->>	<conditional block 1>
->> elif [ <some other test> ]
->> then
->>	<conditional block 2>
->> else
->>	<conditional block 3>
->> fi
+ if [ <some test> ]
+ then
+	<conditional block 1>
+ elif [ <some other test> ]
+ then
+	<conditional block 2>
+ else
+	<conditional block 3>
+ fi
 
 The square brackets reference the command 'test'. Look up the man page of 'test' to see the logical operations it supports.
 
@@ -134,7 +138,7 @@ The square brackets reference the command 'test'. Look up the man page of 'test'
 * -n STRING,	true if the length of STRING is greater than zero.
 * -z STRING, 	true if the length of STRING is zero.
 * STRING1 = STRING2, 	true if STRING1 is equal to STRING2.
-* -e FILE,	true if FILE exists. 
+* -e FILE,	true if FILE exists.
 * INTEGER1 -eq INTEGER2, 	true if INTEGER1 is equal to INTEGER2.
 * -d FILE, 	true if FILE exists and it is a directory
 * INTEGER1 -gt INTEGER2,	true if INTEGER1 is greater than INTEGER2.
@@ -164,7 +168,7 @@ ___
 
 Regular expressions are sequences of characters that specify a search pattern. For example, '*.dat' refers to any file ending in '.dat' and '?.dat' to any file ending with '.dat' with a prefix that is zero or more characters long.
 
-Regular expressions use the special characters '.?*+{|()[\^$'. 
+Regular expressions use the special characters '.?*+{|()[\^$'.
 
 ### A (selective) summary of regular expression syntax:
 
@@ -190,14 +194,14 @@ ___
 
 ## 7. BASH For Loops
 
-A BASH for loop applies the same sequence of operations multiple times while iterating through a sequence. 
+A BASH for loop applies the same sequence of operations multiple times while iterating through a sequence.
 
 ### For loop syntax 1:
 
->> for OUTPUT in $(<command>)
->> do
->>		<commands>
->> done
+ for OUTPUT in $(<command>)
+ do
+		<commands>
+ done
 
 e.g.:
 
@@ -210,10 +214,10 @@ or
 
 ### For loop syntax 2:
 
->> for (( initializer; condition; step ))
->> do
->>	 <commands>
->> done
+ for (( initializer; condition; step ))
+ do
+	 <commands>
+ done
 
 e.g.:
 
@@ -240,7 +244,7 @@ ___
 
 ## 8. BASH Arrays
 
-BASH arrays are a sequence of indexable strings separated. 
+BASH arrays are a sequence of indexable strings separated.
 
 For example,
 
@@ -253,18 +257,18 @@ or
 
 * arr=(), 	 empty array.
 * arr=(1 2 3), 	 initialise array.
-* ${arr[2]}, 	 retrieve the third element (Note: BASH arrays are 0-indexed). 
-* ${arr[@]}, 	retrieve all elements. 
+* ${arr[2]}, 	 retrieve the third element (Note: BASH arrays are 0-indexed).
+* ${arr[@]}, 	retrieve all elements.
 * ${!arr[@]}, 	 retrieve array indices.
 * ${#arr[@]}, 	 calculate the array size.
-* arr[0]=3, 	 overwrite the first element. 
+* arr[0]=3, 	 overwrite the first element.
 * arr+=(4), 	 append value(s).
 * str=$(ls), 	 save ls output as a string.
 * arr=($(ls)), 	 save ls output as an array of files.
 * ${arr[@]:S:N}, 	 Retrieve N elements starting at index S.
 ___
 
-Example 6: Classify arguments as options and files. Append the corresponding matched file to the FILES and OPTIONS arrays. 
+Example 6: Classify arguments as options and files. Append the corresponding matched file to the FILES and OPTIONS arrays.
 
 	FILES=()
 	OPTIONs=()
@@ -286,23 +290,23 @@ Case statements are another way of implementing logical branching. They are easi
 
 ### case syntax:
 
->> case <option> in
->>	<pattern 1>)
->>		<commands>
->>		;;
->>	<pattern 2>)
->>		<commands>
->>		;;
->>	<pattern n>)
->>		<commands>
->>		;;
->>		esac
+ case <option> in
+	<pattern 1>)
+		<commands>
+		;;
+	<pattern 2>)
+		<commands>
+		;;
+	<pattern n>)
+		<commands>
+		;;
+		esac
 
 Note: Case statement patterns support shell pattern matching only ('*', '?' and '.').
 
 ___
 
-Example: A case statement defining option-dependant behaviour in 'del.
+Example 7: A case statement defining option-dependant behaviour in 'del.
 
 	OPTION=${OPTIONS[0]}
 
@@ -325,7 +329,7 @@ Example: A case statement defining option-dependant behaviour in 'del.
 	esac
 
 ___
-		
+
 
 ## 9. Parsing Delimited Text Files with 'awk'.
 
@@ -333,7 +337,7 @@ Sections 3 to 9 defined the main control structures needed to implement 'del'. H
 
 ___
 
-Example: Recycle files and write to LOG_DIR.
+Example 8: Recycle files and write to LOG_DIR.
 
 	for FILE in ${FILES[@]}
 	do
@@ -341,7 +345,7 @@ Example: Recycle files and write to LOG_DIR.
 		then
 			NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
 			OLD_PATH="$(cd $(dirname ${BASH_SOURCE[0]});pwd)/$(basename "$FILE")"
-			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH" >> $LOG_DIR
+			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH"  $LOG_DIR
 			mv $FILE $NEW_PATH
 		else
 			echo "File '$FILE' does not exist!"
@@ -366,9 +370,9 @@ Some 'awk' examples:
 
 ___
 
-Example: Sum the first column (file size) of the 'del' log file.
+Example 9: Sum the first column (file size) of the 'del' log file.
 
-	tail -n4 ~/recycle_bin/.recycle_bin/.recycle_log | awk '{size+=$1} END{print size}' 
+	tail -n4 ~/recycle_bin/.recycle_bin/.recycle_log | awk '{size+=$1} END{print size}'
 
 ___
 
@@ -376,7 +380,7 @@ ___
 
 ___
 
-Example: An implementation of 'del'.
+Example 10: An implementation of 'del'.
 
 #!/bin/bash
 
@@ -395,10 +399,10 @@ del () {
 	# get the number after an option flag.
 
 	get_number () {
-	
+
 		N_OPTION=$(echo $1| sed 's/[^0-9]//g')
 		N_LOG=$(cat "$LOG_PATH" | wc -l)
-	
+
 		if [ $N_OPTION -gt $N_LOG ]
 		then
 			echo $N_LOG
@@ -496,7 +500,7 @@ del () {
 		then
 			NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
 			OLD_PATH="$(cd $(dirname ${BASH_SOURCE[0]});pwd)/$(basename "$FILE")"
-			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH" >> "$LOG_PATH"
+			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH"  "$LOG_PATH"
 			mv $FILE $NEW_PATH
 		else
 			echo "File '$FILE' does not exist!"
@@ -554,25 +558,25 @@ to '.bashrc'.
 
 ## 12. Aliases
 
-Aliases are user-defined commands built out of a sequence of terminal commands; with them, we can define 'shortcuts' to longer commands. 
+Aliases are user-defined commands built out of a sequence of terminal commands; with them, we can define 'shortcuts' to longer commands.
 
 ### Alias syntax:
 
->> alias <shortcut name>=<command>
+ alias <shortcut name>=<command>
 
 e.g.:
 
 	alias rm='rm -i'
 
-will prompt the user for confirmation before deleting the file. 
+will prompt the user for confirmation before deleting the file.
 
-Aliases are a great way of making your system more comfortable to use. Modifications to .bashrc are the simplest way to change the behaviour of your Unix shell. 
+Aliases are a great way of making your system more comfortable to use. Modifications to .bashrc are the simplest way to change the behaviour of your Unix shell.
 
 Be sure to do so with care, though. Comment on any changes, and add new commands to the bottom of the file wherever possible. Even better is to store your custom environment variables in a file that is 'sourced' by .bashrc.
 
 ## 13. Process Management
 
-Unix-like operating systems are multitasking - something that we experience if using the desktop environment of macOS or a Linux distribution. 
+Unix-like operating systems are multitasking - something that we experience if using the desktop environment of macOS or a Linux distribution.
 
 Consider the following command,
 
@@ -580,7 +584,7 @@ Consider the following command,
 
 which shows the current free RAM, updated every 1 second.
 
-A program that we can see in the terminal is running in the 'foreground'; to abort a program running in the foreground, we can use 'Ctrl+c'. 
+A program that we can see in the terminal is running in the 'foreground'; to abort a program running in the foreground, we can use 'Ctrl+c'.
 
 To suspend the task, we can instead use 'ctrl+Z', at which point we see output that gives the process number (JOB SPEC) and the status of the process.
 
@@ -588,7 +592,7 @@ Let's run another version of the command that instead looks at the amount of cac
 
 	watch -n1 'cat /proc/meminfo | grep -w Cached'
 
-which we will also suspend. 
+which we will also suspend.
 
 To start one of these processes back up, we use the 'foreground' command,
 
