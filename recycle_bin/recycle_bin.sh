@@ -1,10 +1,10 @@
-#!/bin/bash +x
+#!/bin/bash
 
-RECYCLE_BIN_SOURCE=$(readlink -f $( dirname "${BASH_SOURCE[0]}" ))
+RECYCLE_BIN_SOURCE="${BASH_SOURCE[0]}"
 
 RECYCLE_BIN_DIR="$RECYCLE_BIN_SOURCE/.recycle_bin"
 
-if [ ! -e $RECYCLE_BIN_DIR ]
+if [ ! -e "$RECYCLE_BIN_DIR" ]
 then
 	mkdir $RECYCLE_BIN_DIR
 	echo "Created new recycle bin directory at :" $RECYCLE_BIN_DIR
