@@ -122,6 +122,7 @@ del () {
 		fi
 	done
 
+	unset -f get_number
 	return 0
 
 }
