@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RECYCLE_BIN_SOURCE="${BASH_SOURCE[0]}"
+RECYCLE_BIN_SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)/$(basename "${BASH_SOURCE[0]}")"
 
 RECYCLE_BIN_DIR="$RECYCLE_BIN_SOURCE/.recycle_bin"
 
@@ -115,7 +115,7 @@ del () {
 		if [ -e $FILE ]
 		then
 			NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
-			OLD_PATH="$(cd "$(dirname "$FILE")" && pwd -P)/$(basename "$FILE")"
+			OLD_PATH="$(cd "$(dirname "$FILE")";pwd)/$(basename "$FILE")"
 			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH" >> "$LOG_PATH"
 			mv $FILE $NEW_PATH
 		else
