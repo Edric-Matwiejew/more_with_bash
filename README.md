@@ -88,7 +88,9 @@ BASH functions allow the same piece of BASH code to be reused multiple times in 
 ### BASH function syntax:
 
 *function name* () {
+
 	*...*
+
 	}
 
 The result of a BASH function should be output to stdin, which can be done using the 'echo' command.
@@ -121,13 +123,21 @@ If statements allow us to write BASH scripts with conditional behaviour.
 ### If statement syntax:
 
  if [ *some test* ]
+
  then
+
 	*conditional block 1*
+
  elif [ *some other test* ]
+
  then
+
 	*conditional block 2*
+
  else
+
 	*conditional block 3*
+
  fi
 
 The square brackets reference the command 'test'. Look up the man page of 'test' to see the logical operations it supports.
@@ -199,8 +209,11 @@ A BASH for loop applies the same sequence of operations multiple times while ite
 ### For loop syntax 1:
 
  for OUTPUT in $(*command*)
+
  do
+
 		*commands*
+
  done
 
 e.g.:
@@ -215,8 +228,11 @@ or
 ### For loop syntax 2:
 
  for (( initializer; condition; step ))
+
  do
+
 	 *commands*
+
  done
 
 e.g.:
@@ -291,16 +307,26 @@ Case statements are another way of implementing logical branching. They are easi
 ### case syntax:
 
  case *option* in
+
 	*pattern 1*)
+
 		*commands*
+
 		;;
+
 	*pattern 2*)
+
 		*commands*
+
 		;;
+
 	*pattern n*)
+
 		*commands*
+
 		;;
-		esac
+
+ esac
 
 Note: Case statement patterns support shell pattern matching only ('*', '?' and '.').
 
@@ -382,137 +408,131 @@ ___
 
 Example 10: An implementation of 'del'.
 
-#!/bin/bash
-
-SCRIPT_DIR="$(cd $(dirname ${BASH_SOURCE[0]});pwd)"
-
-RECYCLE_BIN_DIR="$SCRIPT_DIR/.recycle_bin"
-
-if [ ! -e "$RECYCLE_BIN_DIR" ]
-then
-	mkdir $RECYCLE_BIN_DIR
-	echo "Created new recycle bin directory at :" $RECYCLE_BIN_DIR
-fi
-
-del () {
-
-	# get the number after an option flag.
-
-	get_number () {
-
-		N_OPTION=$(echo $1| sed 's/[^0-9]//g')
-		N_LOG=$(cat "$LOG_PATH" | wc -l)
-
-		if [ $N_OPTION -gt $N_LOG ]
-		then
-			echo $N_LOG
-		else
-			echo $N_OPTION
-		fi
-		}
-
-	LOG_PATH="$RECYCLE_BIN_DIR"/.recycle_log
-
-	# extract the number attached to an OPTION flag.
-
-	if [ ! -e "$LOG_PATH" ]
+	#!/bin/bash
+	
+	SCRIPT_DIR="$(cd $(dirname "${BASH_SOURCE[0]}");pwd)"
+	RECYCLE_BIN_DIR="$SCRIPT_DIR/.recycle_bin"
+	LOG_PATH="$RECYCLE_BIN_DIR/.recycle_log"
+	
+	if [ ! -e "$RECYCLE_BIN_DIR" ]
 	then
-		touch "$LOG_PATH"
+		mkdir "$RECYCLE_BIN_DIR"
+		echo "Created new recycle bin directory at :" "$RECYCLE_BIN_DIR"
 	fi
-
-	if $($(echo $@ | grep -q '\-h') || $(echo $@ | grep -q '\--help'))
-	then
-		echo "Usage: del [OPTION]... [FILE]..."
-		echo "Move FILE(s) to a recycle bin folder."
-		echo
-		echo "  -lN,     list the last N recycled FILES."
-		echo "  -uN,    Restore (undo) the last N recycled FILES."
-		echo ""
-		echo "If no OPTION is present, FILE(s) is moved to a 'recycle bin' directory:"
-		echo "RECYCLE_BIN_DIR='$RECYCLE_BIN_DIR'"
-		echo
-		echo "(This function was sourced from '$RECYCLE_BIN_SOURCE'.)"
+	
+	del () {
+	
+		# get the number after an option flag.
+		get_number () {
+		
+			N_OPTION=$(echo $1| sed 's/[^0-9]//g')
+			N_LOG=$(cat "$LOG_PATH" | wc -l)
+		
+			if [ $N_OPTION -gt $N_LOG ]
+			then
+				echo $N_LOG
+			else
+				echo $N_OPTION
+			fi
+			}
+	
+		if [ ! -e "$LOG_PATH" ]
+		then
+			touch "$LOG_PATH"
+		fi
+	
+		if $( echo $@ | grep -q '\-h' ) || $( echo $@ | grep -q '\--help' )
+		then
+			echo "Usage: del [OPTION]... [FILE]..."
+			echo "Move FILE(s) to a recycle bin folder."
+			echo
+			echo "  -lN,     list the last N recycled FILES."
+			echo "  -uN,    Restore (undo) the last N recycled FILES."
+			echo ""
+			echo "If no OPTION is present, FILE(s) is moved to a 'recycle bin' directory:"
+			echo "RECYCLE_BIN_DIR='$RECYCLE_BIN_DIR'"
+			echo
+			echo "(This function was sourced from '$RECYCLE_BIN_SOURCE'.)"
+			return 0
+		fi
+	
+		FILES=()
+		OPTIONs=()
+	
+		for INPUT in $@
+		do
+			if echo "$INPUT" | grep -Eq '\-[a-zA-Z?][0-9*]'
+			then
+				OPTIONs+=("$INPUT")
+			else
+				FILES+=("$INPUT")
+			fi
+		done
+	
+		if [ ${#OPTIONs[@]} -gt 1 ]
+		then
+	
+			echo "ERROR: More than than 1 OPTION."
+			return 1
+	
+		elif [ ${#OPTIONs[@]} -eq 1 ]
+		then
+	
+			OPTION=${OPTIONs[0]}
+	
+			case $OPTION in
+	
+				-l*)
+					tail -n$(get_number "$OPTION") "$LOG_PATH"
+					return 0
+					;;
+	
+				-u*)
+					N=$(get_number "$OPTION")
+					mv_from=($(tail -n$N "$LOG_PATH" | awk '{print $2}'))
+					mv_to=($(tail -n$N "$LOG_PATH" | awk '{print $3}'))
+	
+					for i in $(seq 0 $((N - 1)))
+					do
+						mv "${mv_from[$i]}" "${mv_to[$i]}"
+	
+						if [ ! -e "${mv_from[$i]}" ]
+						then
+							M=$(grep -n "${mv_from[$i]}" "$LOG_PATH" | cut -f1 -d:)
+							sed -i -e "${M}d" "$LOG_PATH"
+						fi
+	
+					done
+					return 0
+					;;
+				*)
+					echo "ERROR: Option not recognised"
+					return 1
+					;;
+	
+			esac
+		fi
+	
+		#if no OPTION is passed, delete FILES
+		for FILE in ${FILES[@]}
+		do
+			if [ -e "$FILE" ]
+			then
+				NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
+				OLD_PATH="$(cd $(dirname ${BASH_SOURCE[0]});pwd)/$(basename "$FILE")"
+				echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH" >> "$LOG_PATH"
+				mv "$FILE" "$NEW_PATH"
+			else
+				echo "File '$FILE' does not exist!"
+			fi
+		done
+	
+		unset -f get_number
 		return 0
-	fi
-
-	FILES=()
-	OPTIONs=()
-
-	for input in $@
-	do
-		if $(echo $INPUT | grep -Eq '\-[a-zA-Z?][0-9*]')
-		then
-			OPTIONs+=($INPUT)
-		else
-			FILES+=($INPUT)
-		fi
-	done
-
-	if [ ${#OPTIONS[@]} -gt 1 ]
-	then
-
-		echo "ERROR: More than 1 OPTION."
-		return 1
-
-	elif [ ${#OPTIONS[@]} -eq 1 ]
-	then
-
-		OPTION=${OPTIONS[0]}
-
-		case $OPTION in
-
-			-l*)
-				tail -n$(get_number $OPTION) $LOG_PATH
-				return 0
-				;;
-
-			-u*)
-				N=$(get_number $OPTION)
-				mv_from=($(tail -n$N $LOG_PATH | awk '{print $2}'))
-				mv_to=($(tail -n$N $LOG_PATH | awk '{print $3}'))
-
-				for i in $(seq 0 $((N - 1)))
-				do
-					mv ${mv_from[$i]} ${mv_to[$i]}
-
-					if [ ! -e ${mv_from[$i]} ]
-					then
-						M=$(grep -n "${mv_from[$i]}" $LOG_PATH | cut -f1 -d:)
-						sed -i -e "${M}d" $LOG_PATH
-					fi
-
-				done
-				return 0
-				;;
-			*)
-				echo "ERROR: Option not recognised"
-				return 1
-				;;
-
-		esac
-	fi
-
-	#if no OPTION is passed, delete FILES
-
-	for FILE in ${FILES[@]}
-	do
-		if [ -e $FILE ]
-		then
-			NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
-			OLD_PATH="$(cd $(dirname ${BASH_SOURCE[0]});pwd)/$(basename "$FILE")"
-			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH"  "$LOG_PATH"
-			mv $FILE $NEW_PATH
-		else
-			echo "File '$FILE' does not exist!"
-		fi
-	done
-
-	unset -f get_number
-	return 0
-
-}
-
-echo "Defined the 'del' command, use 'del --help' for info on its usage."
+	
+	}
+	
+	echo "Defined the 'del' command, use 'del --help' for info on its usage."
 
 ## 11. Dotfiles
 
