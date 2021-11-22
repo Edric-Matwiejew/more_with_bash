@@ -23,6 +23,6 @@ jobs:
         ref: main
 
     - name: Run test.sh
-      run:
+      run: |
         cd recycle_bin
         bash test.sh
