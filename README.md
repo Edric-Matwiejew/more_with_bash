@@ -1,4 +1,4 @@
-# Doing More with the (B)ourne (A)gain SHell:
+# Doing More with the (B)ourne (A)gain (SH)ell:
 ### An intermediate Unix workshop.
 
 ### Contents
