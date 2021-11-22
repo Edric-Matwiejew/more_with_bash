@@ -46,7 +46,6 @@ del () {
 		echo ""
 		echo "If no OPTION is present, FILE(s) is moved to a 'recycle bin' directory:"
 		echo "RECYCLE_BIN_DIR='$RECYCLE_BIN_DIR'"
-		echo "The location of the recycle bin folder is configured in '$RECYCLE_BIN_SOURCE/.recycle_config'"
 		echo
 		echo "(This function was sourced from '$RECYCLE_BIN_SOURCE'.)"
 		return 0
