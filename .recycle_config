@@ -1,0 +1,4 @@
+#!/bin/bash
+# These files are used to configure the behaviour of the
+# command 'del' command defined in 'recycle_bin.sh'.
+export RECYCLE_BIN_DIR=~/recycle_bin/.recycle_bin
