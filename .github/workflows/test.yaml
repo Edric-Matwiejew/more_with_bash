@@ -1,0 +1,28 @@
+name: 'test'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-18.04
+          
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: main
+
+    - name: Run test.sh
+      run:
+        cd recycle_bin
+        bash test.sh
