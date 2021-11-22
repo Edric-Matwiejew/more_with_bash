@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RECYCLE_BIN_SOURCE="$(pwd)/$(basename "${BASH_SOURCE[0]}")"
+RECYCLE_BIN_SOURCE="$(cd "${BASH_SOURCE[0]}";pwd)/$(basename "${BASH_SOURCE[0]}")"
 
 RECYCLE_BIN_DIR="$RECYCLE_BIN_SOURCE/.recycle_bin"
 
