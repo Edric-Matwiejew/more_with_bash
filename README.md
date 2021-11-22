@@ -20,7 +20,7 @@
 
 Unix commands follow a general strucutre:
 
-*verb* *adverb(s)* *object(s)*
+	*verb* *adverb(s)* *object(s)*
 
 For example in:
 
@@ -87,11 +87,11 @@ BASH functions allow the same piece of BASH code to be reused multiple times in 
 
 ### BASH function syntax:
 
-*function name* () {
-
-	*...*
-
-	}
+	*function name* () {
+	
+		*...*
+	
+		}
 
 The result of a BASH function should be output to stdin, which can be done using the 'echo' command.
 
@@ -122,23 +122,23 @@ If statements allow us to write BASH scripts with conditional behaviour.
 
 ### If statement syntax:
 
- if [ *some test* ]
-
- then
-
-	*conditional block 1*
-
- elif [ *some other test* ]
-
- then
-
-	*conditional block 2*
-
- else
-
-	*conditional block 3*
-
- fi
+	 if [ *some test* ]
+	
+	 then
+	
+		*conditional block 1*
+	
+	 elif [ *some other test* ]
+	
+	 then
+	
+		*conditional block 2*
+	
+	 else
+	
+		*conditional block 3*
+	
+	 fi
 
 The square brackets reference the command 'test'. Look up the man page of 'test' to see the logical operations it supports.
 
@@ -208,13 +208,13 @@ A BASH for loop applies the same sequence of operations multiple times while ite
 
 ### For loop syntax 1:
 
- for OUTPUT in $(*command*)
-
- do
-
-		*commands*
-
- done
+	 for OUTPUT in $(*command*)
+	
+	 do
+	
+			*commands*
+	
+	 done
 
 e.g.:
 
@@ -227,13 +227,13 @@ or
 
 ### For loop syntax 2:
 
- for (( initializer; condition; step ))
-
- do
-
-	 *commands*
-
- done
+	 for (( initializer; condition; step ))
+	
+	 do
+	
+		 *commands*
+	
+	 done
 
 e.g.:
 
@@ -306,28 +306,28 @@ Case statements are another way of implementing logical branching. They are easi
 
 ### case syntax:
 
- case *option* in
-
-	*pattern 1*)
-
-		*commands*
-
-		;;
-
-	*pattern 2*)
-
-		*commands*
-
-		;;
-
-	*pattern n*)
-
-		*commands*
-
-		;;
-
- esac
-
+	 case *option* in
+	
+		*pattern 1*)
+	
+			*commands*
+	
+			;;
+	
+		*pattern 2*)
+	
+			*commands*
+	
+			;;
+	
+		*pattern n*)
+	
+			*commands*
+	
+			;;
+	
+	 esac
+	
 Note: Case statement patterns support shell pattern matching only ('*', '?' and '.').
 
 ___
@@ -582,7 +582,7 @@ Aliases are user-defined commands built out of a sequence of terminal commands; 
 
 ### Alias syntax:
 
- alias *shortcut name*=*command*
+	 alias *shortcut name*=*command*
 
 e.g.:
 
