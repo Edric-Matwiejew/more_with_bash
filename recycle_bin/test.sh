@@ -33,11 +33,11 @@ del file_*
 
 del -l10
 
-del -u20
+del -u8
 
 ls
 
-del -l20
+del -l8
 
 cd ..
 
