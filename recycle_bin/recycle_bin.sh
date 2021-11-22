@@ -114,9 +114,10 @@ del () {
 	do
 		if [ -e $FILE ]
 		then
-			new_name=$RECYCLE_BIN_DIR/$(date +%s)_$FILE
-			echo $(du -b $FILE | cut -f1) $new_name $(readlink -f $FILE) >> $LOG_PATH
-			mv $FILE /$new_name
+			NEW_PATH=$RECYCLE_BIN_DIR/$(date +%s)_$FILE
+			OLD_PATH=$(cd "$(dirname "$1")" && pwd -P)/$(basename "$1")
+			echo $(du $OLD_PATH | cut -f1) $NEW_PATH >> $LOG_PATH
+			mv $FILE /$NEW_PATH
 		else
 			echo "File '$FILE' does not exist!"
 		fi
