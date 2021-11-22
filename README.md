@@ -1,4 +1,4 @@
-# Doing More with the *B*ourne *A*gain *SH*ell:
+# Doing More with the (B)ourne (A)gain SHell:
 ### An intermediate Unix workshop.
 
 ### Contents
@@ -20,7 +20,7 @@
 
 Unix commands follow a general strucutre:
 
-<verb> <adverb(s)> <object(s)>
+*verb* *adverb(s)* *object(s)*
 
 For example in:
 
@@ -87,8 +87,8 @@ BASH functions allow the same piece of BASH code to be reused multiple times in 
 
 ### BASH function syntax:
 
-<function name> () {
-	<...>
+*function name* () {
+	*...*
 	}
 
 The result of a BASH function should be output to stdin, which can be done using the 'echo' command.
@@ -120,14 +120,14 @@ If statements allow us to write BASH scripts with conditional behaviour.
 
 ### If statement syntax:
 
- if [ <some test> ]
+ if [ *some test* ]
  then
-	<conditional block 1>
- elif [ <some other test> ]
+	*conditional block 1*
+ elif [ *some other test* ]
  then
-	<conditional block 2>
+	*conditional block 2*
  else
-	<conditional block 3>
+	*conditional block 3*
  fi
 
 The square brackets reference the command 'test'. Look up the man page of 'test' to see the logical operations it supports.
@@ -198,9 +198,9 @@ A BASH for loop applies the same sequence of operations multiple times while ite
 
 ### For loop syntax 1:
 
- for OUTPUT in $(<command>)
+ for OUTPUT in $(*command*)
  do
-		<commands>
+		*commands*
  done
 
 e.g.:
@@ -216,12 +216,12 @@ or
 
  for (( initializer; condition; step ))
  do
-	 <commands>
+	 *commands*
  done
 
 e.g.:
 
-	for (( c=1; c<=5; c++ ))
+	for (( c=1; c*=5; c++ ))
 	do
 		echo $c
 	done
@@ -290,15 +290,15 @@ Case statements are another way of implementing logical branching. They are easi
 
 ### case syntax:
 
- case <option> in
-	<pattern 1>)
-		<commands>
+ case *option* in
+	*pattern 1*)
+		*commands*
 		;;
-	<pattern 2>)
-		<commands>
+	*pattern 2*)
+		*commands*
 		;;
-	<pattern n>)
-		<commands>
+	*pattern n*)
+		*commands*
 		;;
 		esac
 
@@ -562,7 +562,7 @@ Aliases are user-defined commands built out of a sequence of terminal commands; 
 
 ### Alias syntax:
 
- alias <shortcut name>=<command>
+ alias *shortcut name*=*command*
 
 e.g.:
 
@@ -604,7 +604,7 @@ or the background command
 
 Which will start the process running in the background. bg ['job spec'] is equivalent to starting a command with '&'
 
-watch -t -n1 "date +'%H:%M:%S' | tee -a loged" &>/dev/null &
+watch -t -n1 "date +'%H:%M:%S' | tee -a loged" &*/dev/null &
 
 To see a list of foreground and background processes with their corresponding' job spec':
 
