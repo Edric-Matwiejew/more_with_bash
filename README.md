@@ -624,16 +624,16 @@ or the background command
 
 Which will start the process running in the background. bg ['job spec'] is equivalent to starting a command with '&'
 
-watch -t -n1 "date +'%H:%M:%S' | tee -a loged" &*/dev/null &
+	watch -t -n1 "date +'%H:%M:%S' | tee -a loged" &*/dev/null &
 
 To see a list of foreground and background processes with their corresponding' job spec':
 
-jobs
+	jobs
 
 To end a non-responsive job, we can retrieve the process IDs,
 
-jobs -p
+	jobs -p
 
 and issue the 'kill' command. For example, given a PID of '1484':
 
-kill -KILL 1484
+	kill -KILL 1484
