@@ -2,7 +2,7 @@
 
 SCRIPT_DIR="$(cd $(dirname "${BASH_SOURCE[0]}");pwd)"
 RECYCLE_BIN_DIR="$SCRIPT_DIR/.recycle_bin"
-LOG_PATH="$RECYCLE_BIN_DIR"/.recycle_log
+LOG_PATH="$RECYCLE_BIN_DIR/.recycle_log"
 
 if [ ! -e "$RECYCLE_BIN_DIR" ]
 then
