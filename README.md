@@ -227,7 +227,7 @@ or
 
 ### For loop syntax 2:
 
-	 for (( initializer; condition; step ))
+	 for (( *initializer*; *condition*; *step* ))
 	
 	 do
 	
