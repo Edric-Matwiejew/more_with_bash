@@ -49,7 +49,7 @@ del () {
 	FILES=()
 	OPTIONs=()
 
-	for input in "$@"
+	for input in $@
 	do
 		if echo $INPUT | grep -Eq '\-[a-zA-Z?][0-9*]'
 		then
