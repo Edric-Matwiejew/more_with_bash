@@ -31,7 +31,7 @@ del () {
 		touch "$LOG_PATH"
 	fi
 
-	if [ $(echo $@ | grep -q '\-h') || $(echo $@ | grep -q '\--help') ]
+	if [ echo $@ | grep -q '\-h' ] || [ echo $@ | grep -q '\--help' ]
 	then
 		echo "Usage: del [OPTION]... [FILE]..."
 		echo "Move FILE(s) to a recycle bin folder."
