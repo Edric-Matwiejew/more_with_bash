@@ -14,6 +14,12 @@ jobs:
       matrix:
         os:
           - ubuntu-18.04
+          - windows-2022
+          - windows-latest
+          - windows-2019
+          - macos-11
+          - macos-latest
+          - ubuntu-20.04
           
     steps:
 
