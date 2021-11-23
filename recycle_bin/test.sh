@@ -1,7 +1,7 @@
 #!/bin/bash
 trap 'echo "# $BASH_COMMAND"' DEBUG
 
-. recycle_bin.sh
+. _recycle_bin.sh
 
 mkdir -p test
 cd test
