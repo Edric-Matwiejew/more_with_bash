@@ -182,8 +182,8 @@ Regular expressions use the special characters '.?*+{|()[\^$'.
 
 ### A (selective) summary of regular expression syntax:
 
-* '.', 	matches any single character.
-* '?', 	the preceding item is matched at most once.
+* '.', 	matches any single character zero or one times.
+* '?', 	match to a single preceeding character.
 * '*',	 the preceding item is matched zero or more times.
 * '+',	 the preceding item is matched once or twice.
 * '{n}'	 the preceding item is matched exactly n times.
@@ -198,7 +198,7 @@ ___
 
 Example 4: Pattern matching to identify option flags (e.g. -l and -u).
 
-	echo "$@" | grep -Eq '\-[a-zA-Z?][0-9*]'
+	echo $@ | grep -Eq '\-[a-zA-Z]?[0-9]+'
 
 ___
 
@@ -248,7 +248,7 @@ Example 5: Classifying input arguments.
 
 	for input in $@
 	do
-		if $(echo $input | grep -Eq '\-[a-zA-Z?][0-9*]')
+		if $(echo $input | grep -Eq '\-[a-zA-Z]?[0-9]+')
 		then
 			echo "Input '$input' is an option."
 		else
@@ -291,7 +291,7 @@ Example 6: Classify arguments as options and files. Append the corresponding mat
 
 	for input in $@
 	do
-		if $(echo $input | grep -Eq '\-[a-zA-Z?][0-9*]')
+		if $(echo $input | grep -Eq '\-[a-zA-Z]?[0-9]+')
 		then
 			OPTIONs+=($input)
 		else
@@ -370,7 +370,7 @@ Example 8: Recycle files and write to LOG_DIR.
 		if [ -e $FILE ]
 		then
 			NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
-			OLD_PATH="$(cd $(dirname ${BASH_SOURCE[0]});pwd)/$(basename "$FILE")"
+			OLD_PATH="$(cd $(dirname $FILE);pwd)/$(basename "$FILE")"
 			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH"  $LOG_DIR
 			mv $FILE $NEW_PATH
 		else
