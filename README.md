@@ -1,9 +1,9 @@
-# Doing More with the (B)ourne (A)gain (SH)ell:
-### An intermediate Unix workshop.
+# Doing more with the (B)ourne (A)gain (SH)ell.
+### (An intermediate Unix workshop.)
 
 ### Contents
 1.  The Structure of Unix Commands
-2.  Defining a 'del' Command
+2.  Specifying a 'del' Command
 3.  BASH Scripts and BASH Script Arguments
 4.  BASH Functions
 5.  BASH If Statements
@@ -32,7 +32,7 @@ The command 'ls' is the verb, '-A' is the adverb and '~/' (the user home directo
 
 In general, a Unix-like command is a small program that reads an input string from the "standard input" (stdin) and returns an output string to the "standard output" (stdout). This predictable behaviour supports the piping of output from one command to another.
 
-## 2. Defining a 'del' command.
+## 2. Specifying a 'del' command.
 
 The remove command 'rm FILE' deletes the target FILE permanently on Unix-like operating systems. Great if you know what you're doing - but what if you change your mind later?
 
