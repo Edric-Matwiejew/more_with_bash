@@ -51,7 +51,7 @@ del () {
 
 	for INPUT in $@
 	do
-		if echo "$INPUT" | grep -Eq '\-[a-zA-Z?][0-9*]'
+		if echo "$INPUT" | grep -Eq '\-[a-zA-Z]?[0-9]+'
 		then
 			OPTIONs+=("$INPUT")
 		else
@@ -109,7 +109,7 @@ del () {
 		if [ -e "$FILE" ]
 		then
 			NEW_PATH="$RECYCLE_BIN_DIR/$(date +%s)_$FILE"
-			OLD_PATH="$(cd $(dirname ${BASH_SOURCE[0]});pwd)/$(basename "$FILE")"
+			OLD_PATH="$(cd $(dirname $FILE);pwd)/$(basename "$FILE")"
 			echo $(du "$OLD_PATH" | cut -f1)  "$NEW_PATH" "$OLD_PATH" >> "$LOG_PATH"
 			mv "$FILE" "$NEW_PATH"
 		else
