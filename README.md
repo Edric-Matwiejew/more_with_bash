@@ -218,7 +218,7 @@ A BASH for loop applies the same sequence of operations multiple times while ite
 
 e.g.:
 
-	for i in $(step 0 10)
+	for i in $(seq 0 10)
 	do
 		echo $i
 	done
