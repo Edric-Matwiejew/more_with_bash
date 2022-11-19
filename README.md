@@ -18,19 +18,21 @@
 
 ## 1. The Structure of Unix Commands
 
-Unix commands follow a general strucutre:
+Unix commands follow the strucutre:
 
 	*verb* *adverb(s)* *object(s)*
 
-For example in:
+Or, equivalently:
+
+    [COMMAND] [OPTION(s)] [FILES(s)]
+
+For example:
 
 	ls -A ~/
 
-The command 'ls' is the verb, '-A' is the adverb and '~/' (the user home directory) is the object. More generally, we refer to these components as:
+Where `ls` (list files) is the verb, `-A` (list everything but `.` and `..`) is the adverb and `~/` (the user home directory) is the object. 
 
-[COMMAND] [OPTION(s)] [FILES(s)]
-
-In general, a Unix-like command is a small program that reads an input string from the "standard input" (stdin) and returns an output string to the "standard output" (stdout). This predictable behaviour supports the piping of output from one command to another.
+A Unix-like command is a small program that reads an input string from `stdin` (standard in) and returns an output string to `stdout` (standard output). This predictable behaviour allows for the output of one command to be piped to the input of another.
 
 ## 2. Specifying a 'del' command.
 
