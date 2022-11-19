@@ -34,9 +34,13 @@ Where `ls` (list files) is the verb, `-A` (list everything but `.` and `..`) is 
 
 A Unix-like command is a small program that reads an input string from `stdin` (standard in) and returns an output string to `stdout` (standard output). This predictable behaviour allows for the output of one command to be piped to the input of another.
 
-## 2. Specifying a 'del' command.
+## 2. Implementing the 'del' command.
 
-The remove command 'rm FILE' deletes the target FILE permanently on Unix-like operating systems. Great if you know what you're doing - but what if you change your mind later?
+The remove command, 
+
+    rm [FILE]
+
+deletes the target `[FILE]` permanently. Great if you meant it- not so great otherwise.
 
 In this workshop, we will develop a user-defined  'del' command that:
 
