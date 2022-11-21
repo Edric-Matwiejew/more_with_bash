@@ -144,7 +144,7 @@ Python is a high-level programming language that can be used as a scripting lang
 
 > As a rule-of-thumb, BASH is a good choice for 'set and forget' scripts with fewer than 100 lines. 
 
-## 2. Implementing the `del` command.
+## 2. Defining the `del` command.
 
 The remove command, 
 
