@@ -2,23 +2,59 @@
 ### (An intermediate Unix workshop.)
 
 ### Contents
-1.  The Structure of Unix Commands
-2.  Specifying a 'del' Command
-3.  BASH Scripts and BASH Script Arguments
-4.  BASH Functions
-5.  BASH If Statements
-6.  Regular Expressions
-7.  BASH For Loops
-8.  BASH Arrays
-9.	Parsing Delimited Text Files with 'awk'
-10.	Implementing 'del'
-11.	Dotfiles
-12. Aliases
-13. Process Management
+1.  Unix-like Operating Systems
+2.  Shells
+3.  Syntax of a Unix Command 
+4.  Data Streams
+5.  Defining the 'del' Command
+6.  Scripts and Script Arguments
+7.  Functions
+8.  If Statements
+9.  Subshells
+10. Regular Expressions
+11. For Loops
+12. Arrays
+13. Case Statements
+14.	Parsing Delimited Text Files with `awk`
+15.	Our Implementation of `del`
+16.	Dotfiles
+17. Aliases
+18. Process Management
 
-## 1. The Structure of Unix Commands
+## 1. Unix-like Operating Systems
 
-Unix commands follow the strucutre:
+A Unix like operating system is an operating system that behaves more-or-less like the Unix operating system. The first version of Unix was developed between 1969-71 at Bell Labs. It was one of the first operating systems to support multitasking and the first portable operating system written in C instead of processor dependant machine language.
+
+Characteristics of a Unix-like operating system:
+
+- **Everything is a file:** Almost every system device (e.g. storage, the keyboard and mouse) and resource (e.g. GPU or CPU) is abstracted to a **data stream** that can be read and written to like a regular file.
+
+- **Core Utilities:** A set of core **command-line utilities:** that behave similarly to the core Unix utilities (`ls` `grep`, `ssh`).
+
+- **Full or partial adherence to Unix specifications and the POSIX standard:**  A common set of commands and behaviours. **POSIX** is a collection of standards specified by the IEEE Computer Society. They maintain compatibility between operating systems and (broadly) versions of the same operating system by defining a common user-level application programming interface (API), command line shells and utilities.
+
+The relevance of Unix-like operating systems is arguably due to the last of these three points and the advent of open-source and free-software projects. These include the Linux operating system and the GNU (GNU is Not Unix) toolchain, which provides a collection of compilers, libraries, debuggers and core utilities modelled on Unix. 
+
+A few modern Unix-like operating systems are:
+
+    * Linux
+    * Android (which is based on Linux)
+    * MacOS (versions 10.5 and up are UNIX compliant)
+    * The Playstation 4 and 5 system software 'Orbis OS' (based on FreeBSD)
+
+The portability, transparency and longevity of Unix-like operating systems make them a popular choice for the development of software tools for scientific computing. Linux is the de-facto standard in supercomputing.
+
+## 2. Shells
+
+A shell is a program that provides a user interface to the services of an operating system. Beneath the shell is the operating system kernel - which acts as a bridge of the between the software installed on the computer and its hardware.
+
+Shells can be graphical (e.g. the Windows desktop environment) or command-line based. Command-line shells offer the advantages of low system overhead, integration with **shell scripting languages** and reproducibility. For this reason, many graphical programs are built on, or offer a collection of equivalent, command-line utilities.
+
+The most common shell is the Borne Again Shell (BASH) - it is the default for most Linux distributions. Another common shell is the Z shell (zsh) - which extends the features of BASH. It is the default shell on current versions of macOS.
+
+### 3. Syntax of a Unix Command
+
+**Command-line utilities** on **Unix-like** operating systems follow the syntax:
 
 	*verb* *adverb(s)* *object(s)*
 
@@ -32,48 +68,120 @@ For example:
 
 Where `ls` (list files) is the verb, `-A` (list everything but `.` and `..`) is the adverb and `~/` (the user home directory) is the object. 
 
-A Unix-like command is a small program that reads an input string from `stdin` (standard in) and returns an output string to `stdout` (standard output). This predictable behaviour allows for the output of one command to be piped to the input of another.
+**Command line utilities** (or just commands) are a small programs designed for use in a command-line **shell**. When executed, they read input data from the **stdin** (standard in) **data stream** and returns an output the **stdout** (standard output) **data stream**. This predictable behaviour allows for the output of one command to be **piped** to the input of another.
 
-## 2. Implementing the 'del' command.
+
+## 4. Data Streams
+
+A data streams transfer data (usually text) from a source (file, device or program) to an outflow in another.
+
+When a BASH session starts, it creates three default data streams which are each assigned an integer file handle (remember, everything is a file).
+
+- **stdin** (file handle 0):    The standard input data stream, most often takes input from the keyboard.
+
+- **stdout** (file handle 1):      The standard output data stream. Passes data to the display by default.
+
+- **stderr** (file handle 2):    The standard error data stream. Passes data to the display by default.
+
+Data streams created by BASH.
+
+The `read` command takes input from stdin.
+
+    read
+    This is to stdin
+
+ Command-line utilities output to stdout:
+
+    ls -A .
+
+    total 3
+    drwxr-xr-x. 1 edric edric    0 Nov  5 23:05 Videos
+    drwxr-xr-x. 1 edric edric 3058 Nov 18 18:38 Downloads
+    drwxr-xr-x. 1 edric edric   24 Nov 19 21:32 software
+
+Unless they encounter an error:
+
+    ls -A nonexistant
+
+The above returns the error:
+
+    ls: cannot access 'nonexistent': No such file or directory
+
+Which is printed to stderr.
+
+The pipe command `|`, passes stdout to another command and `|&` pipes stderr and stdout to stdin (this can help with debugging).
+
+To redirect stdout:
+
+
+To redirect and append:
+
+    df -h >> diskusage.txt
+
+More generally, `&[FILE HANDLE FROM]>[FILE HANDLE TO]` redirects the data stream with [FILE HANDLE FROM] to [FILE HANDLE TO].
+
+For instance, to redirect stderr to stdout:
+
+    ls -A nonexistant 2>&1
+
+The `&` before the `1` is important, without it is ambiguous as to wether we are referencing a file named "1".
+
+Data can be sent to a command by redirecting stdin (though this is not very common):
+
+    command < input.txt
+
+To discard the output of a datastream we can redirect it to`\dev\null`, which discards all data written to it.
+
+    command > /dev/null
+
+It's possible to open addition file descriptors, but stdin, stdout and stderr are usually sufficiant.
+
+## 1.4. Why BASH?
+
+BASH is a scripting language. Scripting languages are programming languages that manipulate or automate exisitng systems. For BASH this is the Unix file system, the input and output of command line utilities and  **environment variables** that  control the behaviours of software.
+
+Python is a high-level programming language that can be used as a scripting language. However, for operation on files, BASH is often faster and requires fewer lines of code. For more complex tasks, Python is a better choice as it is more flexible and easier to maintain.
+
+> As a rule-of-thumb, BASH is a good choice for 'set and forget' scripts with fewer than 100 lines. 
+
+## 2. Implementing the `del` command.
 
 The remove command, 
 
     rm [FILE]
 
-deletes the target `[FILE]` permanently. Great if you meant it- not so great otherwise.
+deletes the target `[FILE]` permanently. Great if you meant it - not so great otherwise.
 
-In this workshop, we will develop a user-defined  'del' command that:
+In portion of the workshop, we'll develop a user-defined `del` command that:
 
-1. Sends target FILES(s) to a hidden 'recycle bin' directory '.recycle_bin':
+1. Sends target FILES(s) to a hidden directory, `.recycle_bin`.
 
 	del [FILE(s)]
 
 2. When passed the -l option lists the N most recently 'recycled' files:
 
-	del -lN
+	del -l [N]
 
 3. When passed the -u option undoes the N most recent 'recycles':
 
-	del -uN
+	del -u [N]
 
-Where '-l' and '-u' are options and 'N' is an integer value.
+Where `-l` and `-u` are options and `N` is an integer value.
 
-## 3. BASH Scripts and BASH Script Arguments
+## 6. BASH Scripts and BASH Script Arguments
 
-A BASH script is a text file containing lines of BASH compatible commands. These scripts start with a "shebang" and the path to the BASH interpreter:
+A BASH script is a text file containing lines of BASH compatible commands. These scripts start with a *shebang* and the path to the BASH interpreter:
 
 	#!/bin/bash
 
-When given the needed file permissions, we can execute the script like any other program using the './' command.
-
 BASH scripts accept an arbitrary number of whitespace delimited input arguments. These are accessed from within the BASH script like so:
 
-* $0, 	the script (or function) name.
-* $N, 	the Nth arguments.
-* $#, 	the number of variables passed to the script (or function).
-* $* and $@,	all of the positional arguments.
+* `$0`, 	        The script (or function) name.
+* `$N`, 	        The Nth argument.
+* `$#`, 	        The number of variables passed to the script (or function).
+* `$*` and `$@`,	All of the positional arguments.
 
-Where '$*' expands to a single string and '$@' expands to a sequence of strings.
+Where `$*` expands to a single string and `$@` expands to a sequence of strings.
 
 ___
 
@@ -87,9 +195,9 @@ Example 1: Parsing arguments.
 
 ___
 
-## 4. BASH Functions
+## 7. BASH Functions
 
-BASH functions allow the same piece of BASH code to be reused multiple times in a terminal session or script. They are also able to accept arguments as described in Section 4. Multiple BASH functions can be defined in the same script.
+BASH functions allow the same piece of BASH code to be reused multiple times in a terminal session or script.
 
 ### BASH function syntax:
 
@@ -99,13 +207,19 @@ BASH functions allow the same piece of BASH code to be reused multiple times in 
 	
 		}
 
-The result of a BASH function should be output to stdin, which can be done using the 'echo' command.
+Typically, a  BASH function outputs to stdin if sucessful:
+
+    echo 'Everything is fine!'
+
+And outputs to stderr otherwise:
+
+    echo 'Everything is awful!' 1>&2 
 
 Standard practice is to return the exit status of the function (or script) where,
 
 	return 0
 
-indicates success, and 'return N', where N=2,3..., indicates an error.
+indicates success, and `return [N]`, where [N]=1,2,3..., indicates an error.
 ___
 
 Example 2: A BASH function that returns the number of input arguments.
@@ -118,11 +232,11 @@ Example 2: A BASH function that returns the number of input arguments.
 
 ___
 
-To use the 'del' command outside of the bash script itself, 'source' (read and execute) the script in the current shell environment:
+To use a bash function outside of the bash script itself, **source** (read and execute) the script in the current shell environment:
 
 	. ./recycle_bin/recyle_bin.sh
 
-## 5. If Statements
+## 8. If Statements
 
 If statements allow us to write BASH scripts with conditional behaviour.
 
@@ -180,25 +294,43 @@ Example 3: Create the '.recycle_bin' directory if it doesn't exist.
 	fi
 ___
 
-## 6. Regular Expressions
+## 9. Subshells
 
-Regular expressions are sequences of characters that specify a search pattern. For example, '*.dat' refers to any file ending in '.dat' and '?.dat' to any file ending with '.dat' with a prefix that is zero or more characters long.
+In Example 3, the command `$(cd $(dirname ${BASH_SOURCE[0]});pwd)` carries out the following steps.
 
-Regular expressions use the special characters '.?*+{|()[\^$'.
+First, `$( [COMMANDS] )` spawns a new BASH **subshell** that contains only the default enviornment variables.
+
+Next, this fresh subshell executes:
+
+    cd [PATH TO SCRIPT FILE]
+
+Where `[PATH TO SCRIPT FILE]` is the location of the script. Note that environment variable substitution occurs *before* the command is passed to the subshell.
+
+Finally,
+
+    pwd
+
+returns the absolute path to the folder that contains the script to the originating (parent) shell.
+
+## 10. Regular Expressions
+
+Regular expressions are sequences of characters that specify a search pattern. For example, `*.dat` refers to any file ending in `.dat` and `?.dat` to any file ending with `.dat` with a prefix that is zero or more characters long.
+
+Regular expressions use the special characters `.?*+{|()[\^$`.
 
 ### A (selective) summary of regular expression syntax:
 
-* '.', 	matches any single character zero or one times.
-* '?', 	match to a single preceeding character.
-* '*',	 the preceding item is matched zero or more times.
-* '+',	 the preceding item is matched once or twice.
-* '{n}'	 the preceding item is matched exactly n times.
-* '|',	 joins regular expressions and returns whatever matches either of the two strings.
-* [],	matches against a list or range of characters. e.g. '[^adf]' matches to anything that is not a d or f and '[0-9A-Za-z]' matches to all alphanumeric characters
+* `.` 	matches any single character zero or one times.
+* `?`, 	match to a single preceeding character.
+* `*`,	 the preceding item is matched zero or more times.
+* `+`,	 the preceding item is matched once or twice.
+* `{n}`	 the preceding item is matched exactly n times.
+* `|`,	 joins regular expressions and returns whatever matches either of the two strings.
+* `[]`,	matches against a list or range of characters. e.g. `[^adf]` matches to anything that is not a `d` or `f` and `[0-9A-Za-z]` matches to all alphanumeric characters
 
-A special character may be included as a normal character in a regular expression by preceding ('escaping') it with a '\' character.
+A special character may be included as a normal character in a regular expression by preceding (`escaping`) it with a `\` character.
 
-Not all BASH commands support the full range of regular expressions. However, the '.', '?' and '*' operators are (almost) universally recognised for 'shell pattern matching'.
+Not all BASH commands support the full range of regular expressions. However, the `.`, `?` and `*` operators are (almost) universally recognised for `shell pattern matching.
 
 ___
 
@@ -208,7 +340,7 @@ Example 4: Pattern matching to identify option flags (e.g. -l and -u).
 
 ___
 
-## 7. BASH For Loops
+## 11. For Loops
 
 A BASH for loop applies the same sequence of operations multiple times while iterating through a sequence.
 
@@ -264,7 +396,7 @@ Example 5: Classifying input arguments.
 
 ___
 
-## 8. BASH Arrays
+## 12. Arrays
 
 BASH arrays are a sequence of indexable strings separated.
 
@@ -277,17 +409,17 @@ or
 
 ### A (selective) summary of BASH array syntax:
 
-* arr=(), 	 empty array.
-* arr=(1 2 3), 	 initialise array.
-* ${arr[2]}, 	 retrieve the third element (Note: BASH arrays are 0-indexed).
-* ${arr[@]}, 	retrieve all elements.
-* ${!arr[@]}, 	 retrieve array indices.
-* ${#arr[@]}, 	 calculate the array size.
-* arr[0]=3, 	 overwrite the first element.
-* arr+=(4), 	 append value(s).
-* str=$(ls), 	 save ls output as a string.
-* arr=($(ls)), 	 save ls output as an array of files.
-* ${arr[@]:S:N}, 	 Retrieve N elements starting at index S.
+* `arr=()`, 	 empty array.
+* `arr=(1 2 3)`, 	 initialise array.
+* `${arr[2]}`, 	 retrieve the third element (Note: BASH arrays are 0-indexed).
+* `${arr[@]}`, 	retrieve all elements.
+* `${!arr[@]}`, 	 retrieve array indices.
+* `${#arr[@]}`, 	 calculate the array size.
+* `arr[0]=3`, 	 overwrite the first element.
+* `arr+=(4)`, 	 append value(s).
+* `str=$(ls)`, 	 save ls output as a string.
+* `arr=($(ls))`, 	 save ls output as an array of files.
+* `${arr[@]:S:N}`, 	 Retrieve N elements starting at index S.
 ___
 
 Example 6: Classify arguments as options and files. Append the corresponding matched file to the FILES and OPTIONS arrays.
@@ -306,7 +438,7 @@ Example 6: Classify arguments as options and files. Append the corresponding mat
 	done
 ___
 
-## 8. Case Statements
+## 13. Case Statements
 
 Case statements are another way of implementing logical branching. They are easier to write and read in many instances than a long sequence of 'if' and 'elif' statements.
 
@@ -363,13 +495,13 @@ Example 7: A case statement defining option-dependant behaviour in 'del.
 ___
 
 
-## 9. Parsing Delimited Text Files with 'awk'.
+## 14. Parsing Delimited Text Files with 'awk'.
 
-Sections 3 to 9 defined the main control structures needed to implement 'del'. However, we need a means of tracking the 'recycled' files and their original location. To achieve this, we will use a log file in the '.recycle_bin' directory called '.recycle_log' that will store the file size, file path in '.recycle_bin' and the original file path in a single line for each recycled file.
+Sections 3 to 9 defined the main control structures needed to implement `del`. However, we need a means of tracking the 'recycled' files and their original location. To achieve this, we will use a log file in the `.recycle_bin` directory called `.recycle_log` that will store the file size, file path in `.recycle_bin` and the original file path in a single line for each recycled file.
 
 ___
 
-Example 8: Recycle files and write to LOG_DIR.
+Example 8: Recycle files and write to `$LOG_DIR`.
 
 	for FILE in ${FILES[@]}
 	do
@@ -386,29 +518,29 @@ Example 8: Recycle files and write to LOG_DIR.
 
 ___
 
-We will use the 'awk' command to parse this log file. Awk is a scripting language used for manipulating data and generating reports. It supports variables, numeric functions, string functions and logical operators.
+We will use the `awk` command to parse this log file. Awk is a scripting language used for manipulating data and generating reports. It supports variables, numeric functions, string functions and logical operators.
 
 Awk allows a programmer to write tiny programs to search for a pattern on each line of a file and carry out an action when that pattern is detected.
 
-Some 'awk' examples:
+Some `awk` examples:
 
-* awk '{print}' FILE, 	print the contents of FILE to stdout.
-* awk '{print $1}' FILE, 	print the first column of FILE, by default white space is treated as the separator.
-* awk '{print $1 ""$3}' FILE,	 print the first and the third column of FILE with a space in-between.
-* awk '/example/ {print}' FILE,	 print all lines in FILE that contain the word example.
-* awk '[0-9]/{print}' FILE,	 print all lines in FILE that contain numbers.
-* awk ‘^[0-9]/{print}’ FILE,	 print all lines in FILE that start with a number
-* awk -F',' '{sum+=$1} END{print sum;}' FILE,	sum the first column of FILE using ',' as the column delimiter.
+* `awk '{print}' [FILE]`, 	print the contents of `[FILE]` to stdout.
+* `awk '{print $1}' [FILE]`, 	print the first column of `[FILE]`, by default white space is treated as the separator.
+* `awk '{print $1 ""$3}' [FILE]`,	 print the first and the third column of `[FILE]` with a space in-between.
+* `awk '/example/ {print}' [FILE]`,	 print all lines in `[FILE]` that contain the word example.
+* `awk '[0-9]/{print}' [FILE]`,	 print all lines in `[FILE]` that contain numbers.
+* `awk ‘^[0-9]/{print}’ [FILE]`,	 print all lines in `[FILE]` that start with a number
+* `awk -F',' '{sum+=$1} END{print sum;}' [FILE]`,	sum the first column of `[FILE]` using `,` as the column delimiter.
 
 ___
 
-Example 9: Sum the first column (file size) of the 'del' log file.
+Example 9: Sum the first column (file size) of the `del` log file.
 
 	tail -n4 ~/recycle_bin/.recycle_bin/.recycle_log | awk '{size+=$1} END{print size}'
 
 ___
 
-## 10.  Implementing 'del'
+## 15. Our Implementation of `del`
 
 ___
 
@@ -540,7 +672,7 @@ Example 10: An implementation of 'del'.
 	
 	echo "Defined the 'del' command, use 'del --help' for info on its usage."
 
-## 11. Dotfiles
+## 16. Dotfiles
 
 The behaviour of a Unix system is controlled through the setting of environment variables. For instance, we have already encountered the HOME variable, which contains the path to the current user's home directory:
 
@@ -550,11 +682,11 @@ Another important variable is the $PATH directory.
 
 	echo $PATH
 
-This contains a list of locations that Unix searches for executable files (starting from the first directory). For instance, if we use the command' 'whereis' to search for the location of the 'grep' program:
+This contains a list of locations that Unix searches for executable files (starting from the first directory). For instance, if we use the command `/whereis` to search for the location of the `grep` program:
 
 	whereis 'grep'
 
-We see that it is located under '/bin'.
+We see that it is located under `/bin`.
 
 	echo $PATH | grep ':/bin:'
 
@@ -566,7 +698,7 @@ Let's bring our attention back to the HOME environment variable. This variable i
 2. HOME is (typically) the location of user-specific programs.
 3. HOME is (typically) the location for user-specific configuration files.
 
-Configuration files are hidden files in the Unix file system. Hidden files in Unix start with a '.'. For this reason, they are often referred to as 'dotfiles'.
+Configuration files are hidden files in the Unix file system. Hidden files in Unix start with a `.`. For this reason, they are often referred to as `dotfiles`.
 
 From with the user's home directory, the command:
 
@@ -574,15 +706,15 @@ From with the user's home directory, the command:
 
 typically displays several dotfiles.
 
-The most notable of these is perhaps '.bashrc'. This dotfile is 'sourced' whenever a new Bash session is launched (e.g. when the terminal window is opened).
+The most notable of these is perhaps `.bashrc`. This dotfile is 'sourced' whenever a new Bash session is launched (e.g. when the terminal window is opened).
 
-To have 'del' avaliable whenever we start a terminal session we can append,
+To have `del` avaliable whenever we start a terminal session we can append,
 
 	. ~/recycle_bin/recycle_bin.sh
 
-to '.bashrc'.
+to `.bashrc`.
 
-## 12. Aliases
+## 17. Aliases
 
 Aliases are user-defined commands built out of a sequence of terminal commands; with them, we can define 'shortcuts' to longer commands.
 
@@ -600,7 +732,7 @@ Aliases are a great way of making your system more comfortable to use. Modificat
 
 Be sure to do so with care, though. Comment on any changes, and add new commands to the bottom of the file wherever possible. Even better is to store your custom environment variables in a file that is 'sourced' by .bashrc.
 
-## 13. Process Management
+## 18. Process Management
 
 Unix-like operating systems are multitasking - something that we experience if using the desktop environment of macOS or a Linux distribution.
 
@@ -610,9 +742,9 @@ Consider the following command,
 
 which shows the current free RAM, updated every 1 second.
 
-A program that we can see in the terminal is running in the 'foreground'; to abort a program running in the foreground, we can use 'Ctrl+c'.
+A program that we can see in the terminal is running in the `foreground`; to abort a program running in the foreground, we can use `Ctrl+c`.
 
-To suspend the task, we can instead use 'ctrl+Z', at which point we see output that gives the process number (JOB SPEC) and the status of the process.
+To suspend the task, we can instead use `ctrl+Z`, at which point we see output that gives the process number (JOB SPEC) and the status of the process.
 
 Let's run another version of the command that instead looks at the amount of cached memory:
 
@@ -620,7 +752,7 @@ Let's run another version of the command that instead looks at the amount of cac
 
 which we will also suspend.
 
-To start one of these processes back up, we use the 'foreground' command,
+To start one of these processes back up, we use the `foreground` command,
 
 	fg 1
 
@@ -628,11 +760,11 @@ or the background command
 
 	bg 1
 
-Which will start the process running in the background. bg ['job spec'] is equivalent to starting a command with '&'
+Which will start the process running in the background. 'bg [job spec]' is equivalent to starting a command with `&`
 
 	watch -t -n1 "date +'%H:%M:%S' | tee -a loged" &*/dev/null &
 
-To see a list of foreground and background processes with their corresponding' job spec':
+To see a list of foreground and background processes with their corresponding 'job spec':
 
 	jobs
 
@@ -640,7 +772,7 @@ To end a non-responsive job, we can retrieve the process IDs,
 
 	jobs -p
 
-and issue the 'kill' command. For example, given a PID of '1484':
+and issue the `kill` command. For example, given a PID of `1484`:
 
 	kill -KILL 1484
 
