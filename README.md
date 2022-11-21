@@ -37,10 +37,10 @@ The relevance of Unix-like operating systems is arguably due to the last of thes
 
 A few modern Unix-like operating systems are:
 
-    * Linux
-    * Android (which is based on Linux)
-    * MacOS (versions 10.5 and up are UNIX compliant)
-    * The Playstation 4 and 5 system software 'Orbis OS' (based on FreeBSD)
+* Linux
+* Android (which is based on Linux)
+* MacOS (versions 10.5 and up are UNIX compliant)
+* The Playstation 4 and 5 system software 'Orbis OS' (based on FreeBSD)
 
 The portability, transparency and longevity of Unix-like operating systems make them a popular choice for the development of software tools for scientific computing. Linux is the de-facto standard in supercomputing.
 
