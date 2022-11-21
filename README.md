@@ -60,7 +60,7 @@ The most common shell is the Borne Again Shell (BASH) - it is the default for mo
 
 Or, equivalently:
 
-    [COMMAND] [OPTION(s)] [FILES(s)]
+> [COMMAND] [OPTION(s)] [FILES(s)]
 
 For example:
 
