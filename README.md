@@ -768,4 +768,3 @@ and issue the `kill` command. For example, given a PID of `1484`:
 
 	kill -KILL 1484
 
-*
