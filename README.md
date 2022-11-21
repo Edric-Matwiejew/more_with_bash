@@ -6,7 +6,7 @@
 2.  Shells
 3.  Syntax of a Unix Command 
 4.  Data Streams
-5.  Defining the 'del' Command
+5.  Defining the `del` Command
 6.  Scripts and Script Arguments
 7.  Functions
 8.  If Statements
