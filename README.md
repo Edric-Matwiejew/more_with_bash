@@ -56,7 +56,7 @@ The most common shell is the Borne Again Shell (BASH) - it is the default for mo
 
 **Command-line utilities** on **Unix-like** operating systems follow the syntax:
 
-	*verb* *adverb(s)* *object(s)*
+> *verb* *adverb(s)* *object(s)*
 
 Or, equivalently:
 
